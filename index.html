@@ -45,9 +45,9 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
 .masthead .titles{display:flex; flex-direction:column; gap:2px;}
 .masthead .eyebrow{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); font-weight:600;}
 .masthead h1{font-size:26px;}
-.iobar{display:flex; gap:8px; align-items:center;}
+.iobar{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
 .iobar input[type=file]{display:none;}
-.tabs{display:flex; gap:4px; overflow-x:auto; border-bottom:1px solid var(--border); margin-bottom:20px; padding-bottom:0;}
+.tabs{display:flex; gap:4px; overflow-x:auto; border-bottom:1px solid var(--border); margin-bottom:20px;}
 .tab-btn{
   appearance:none; border:none; background:transparent; color:var(--text-muted);
   font:inherit; font-weight:600; font-size:13.5px; padding:10px 12px; cursor:pointer;
@@ -57,6 +57,7 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
 .tab-btn[aria-selected="true"]{color:var(--accent-text); border-bottom-color:var(--accent);}
 .section-head{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
 .section-head h2{font-size:19px;}
+.head-btns{display:flex; gap:8px; flex-wrap:wrap;}
 .btn{
   appearance:none; border:1px solid var(--border); background:var(--surface); color:var(--text);
   font:inherit; font-weight:600; font-size:13.5px; padding:8px 14px; border-radius:7px; cursor:pointer;
@@ -67,8 +68,11 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
 }
 .btn-sm{padding:6px 10px; font-size:12.5px;}
 .btn-primary{background:var(--accent); border-color:var(--accent); color:var(--bg);}
+.btn-danger{background:var(--danger); border-color:var(--danger); color:#fff;}
+.btn-danger-outline{border-color:var(--danger); color:var(--danger);}
 .btn-ghost{border-color:transparent; background:transparent; padding:4px 8px; font-size:12px; color:var(--text-muted);}
-.btn-ghost:hover{color:var(--danger); border-color:var(--danger);}
+.btn-ghost:hover{color:var(--accent-text); border-color:var(--accent);}
+.btn-ghost.remove:hover{color:var(--danger); border-color:var(--danger);}
 .chips{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;}
 .chip{
   border:1px solid var(--border); background:var(--surface); color:var(--text-muted);
@@ -82,6 +86,8 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
   margin-bottom:16px;
 }
 .panel h3{font-size:14px; margin-bottom:12px;}
+.panel.danger{border-color:var(--danger);}
+.panel.danger h3{color:var(--danger);}
 .field{display:flex; flex-direction:column; gap:4px; margin-bottom:12px;}
 .field label{font-size:12.5px; font-weight:600; color:var(--text-muted);}
 .field input, .field textarea, .field select{
@@ -91,7 +97,8 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
 .field textarea{min-height:64px; resize:vertical;}
 .form-row{display:flex; gap:10px; flex-wrap:wrap;}
 .form-row .field{flex:1 1 200px;}
-.form-actions{display:flex; gap:8px; margin-top:4px;}
+.form-actions{display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;}
+.hint{font-size:12px; color:var(--text-muted); margin-bottom:12px;}
 .list{display:flex; flex-direction:column; gap:8px;}
 .card{
   border:1px solid var(--border); background:var(--surface); border-radius:9px; padding:12px 14px;
@@ -100,7 +107,8 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
 .card-main{min-width:0; flex:1;}
 .card-title{font-weight:600; font-size:14.5px; margin-bottom:2px; overflow-wrap:anywhere;}
 .card-sub{font-size:12.5px; color:var(--text-muted); display:flex; gap:8px; flex-wrap:wrap; align-items:center; overflow-wrap:anywhere;}
-.card-desc{font-size:13px; color:var(--text-muted); margin-top:4px;}
+.card-desc{font-size:13px; color:var(--text-muted); margin-top:4px; white-space:pre-wrap;}
+.card-actions{display:flex; gap:2px; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end;}
 .badge{
   font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; color:#fff; white-space:nowrap;
 }
@@ -131,13 +139,13 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
 .toast{
   position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
   background:var(--text); color:var(--bg); padding:9px 16px; border-radius:8px; font-size:13px;
-  opacity:0; pointer-events:none; transition:opacity .2s ease;
+  opacity:0; pointer-events:none; transition:opacity .2s ease; max-width:90vw; text-align:center;
 }
 .toast.show{opacity:1;}
 .note{font-size:12px; color:var(--text-muted); margin-bottom:18px;}
 @media (max-width:520px){
   .card{flex-direction:column;}
-  .tabs{gap:2px;}
+  .card-actions{justify-content:flex-start;}
   .tab-btn{padding:9px 9px; font-size:12.5px;}
   .masthead{flex-direction:column;}
 }
@@ -145,46 +153,74 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
 </head>
 <body>
 <div id="app"></div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (function(){
   "use strict";
 
   var STORAGE_KEY = "worklog.v1";
+  var JIRA_BASE = "https://enverus.atlassian.net/browse/";
+  var SECTIONS = ["tickets","confluence","tools","highlights"];
+  var CAT_ROTATION = ["var(--cat-1)","var(--cat-2)","var(--cat-3)","var(--cat-4)","var(--cat-5)","var(--cat-6)","var(--cat-7)","var(--cat-8)"];
+  var DEFAULT_CATEGORIES = [
+    {id:"extract", name:"Extract", color:"var(--cat-1)"},
+    {id:"adns", name:"ADNS", color:"var(--cat-2)"},
+    {id:"bridge", name:"Bridge", color:"var(--cat-3)"},
+    {id:"other", name:"Other", color:"var(--cat-4)"}
+  ];
 
-  var DEFAULT_STATE = {
-    categories: [
-      {id:"extract", name:"Extract", color:"var(--cat-1)"},
-      {id:"adns", name:"ADNS", color:"var(--cat-2)"},
-      {id:"bridge", name:"Bridge", color:"var(--cat-3)"},
-      {id:"other", name:"Other", color:"var(--cat-4)"}
-    ],
-    tickets: [], trainings: [], confluence: [], tools: [], highlights: []
+  // Per-section config for the simple (non-ticket) lists.
+  var CFG = {
+    confluence: {
+      title:"Confluence Pages", addLabel:"+ Add page", showLink:true, showDesc:false,
+      fields:[
+        {key:"title", label:"Page title (optional)", type:"text", placeholder:"e.g. ADNS onboarding guide"},
+        {key:"link", label:"Confluence link", type:"text", placeholder:"https://yourteam.atlassian.net/wiki/..."}
+      ]
+    },
+    tools: {
+      title:"Tools Created", addLabel:"+ Add tool", showLink:true, showDesc:true,
+      fields:[
+        {key:"title", label:"Tool name (optional)", type:"text", placeholder:"e.g. Extract log validator"},
+        {key:"link", label:"Link (repo, doc, app)", type:"text", placeholder:"optional"},
+        {key:"description", label:"What it does", type:"textarea", placeholder:"optional"}
+      ]
+    },
+    highlights: {
+      title:"Highlights", addLabel:"+ Add highlight", showLink:false, showDesc:true,
+      fields:[
+        {key:"title", label:"Title", type:"text", placeholder:"e.g. Cut extract failures 30%"},
+        {key:"description", label:"Details", type:"textarea", placeholder:"optional"}
+      ]
+    }
   };
 
-  var CAT_ROTATION = ["var(--cat-1)","var(--cat-2)","var(--cat-3)","var(--cat-4)","var(--cat-5)","var(--cat-6)","var(--cat-7)","var(--cat-8)"];
+  // ---------- state ----------
+  function copy(o){ return JSON.parse(JSON.stringify(o)); }
+  function normalizeState(s){
+    if(!s || typeof s !== "object") s = {};
+    var out = {};
+    SECTIONS.forEach(function(k){ out[k] = Array.isArray(s[k]) ? s[k] : []; });
+    out.categories = (Array.isArray(s.categories) && s.categories.length) ? s.categories : copy(DEFAULT_CATEGORIES);
+    return out;
+  }
 
   var storageOk = true;
   var state = null;
-  try{
-    var raw = localStorage.getItem(STORAGE_KEY);
-    state = raw ? JSON.parse(raw) : null;
-  }catch(e){ storageOk = false; state = null; }
-  if(!state || typeof state !== "object"){ state = JSON.parse(JSON.stringify(DEFAULT_STATE)); }
-  ["categories","tickets","trainings","confluence","tools","highlights"].forEach(function(k){
-    if(!Array.isArray(state[k])) state[k] = [];
-  });
-  if(state.categories.length === 0){ state.categories = DEFAULT_STATE.categories.slice(); }
+  var savedRaw = null;
+  try{ savedRaw = localStorage.getItem(STORAGE_KEY); }
+  catch(e){ storageOk = false; }
+  try{ state = normalizeState(savedRaw ? JSON.parse(savedRaw) : null); }
+  catch(e){ state = normalizeState(null); }
 
-  var ui = { tab: "overview", ticketFilter: "all", openForm: null, confirmRemoveAll: false };
+  var ui = { tab:"overview", ticketFilter:"all", form:null, confirmRemoveAll:false };
 
+  // ---------- helpers ----------
   function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
   function nowIso(){ return new Date().toISOString(); }
   function fmtDate(iso){
-    try{
-      var d = new Date(iso);
-      return d.toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"});
-    }catch(e){ return ""; }
+    try{ return new Date(iso).toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"}); }
+    catch(e){ return ""; }
   }
   function monthKey(iso){ return iso ? iso.slice(0,7) : ""; }
   function monthLabel(key){
@@ -208,8 +244,10 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
     for(var i=0;i<state.categories.length;i++){ if(state.categories[i].id===id) return state.categories[i]; }
     return {id:"other", name:"Other", color:"var(--cat-4)"};
   }
-
-  var JIRA_BASE = "https://enverus.atlassian.net/browse/";
+  function findById(list, id){
+    for(var i=0;i<list.length;i++){ if(list[i].id===id) return list[i]; }
+    return null;
+  }
   function normalizeTicketEntry(raw){
     raw = String(raw || "").trim();
     if(!raw) return "";
@@ -217,6 +255,16 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
     if(/^[a-z][a-z0-9]*-\d+$/i.test(raw)) return JIRA_BASE + raw.toUpperCase();
     return raw;
   }
+  function isDuplicateTicket(link, excludeId){
+    var k = link.toLowerCase();
+    return state.tickets.some(function(t){ return t.id !== excludeId && t.link && t.link.toLowerCase() === k; });
+  }
+  function el(html){
+    var t = document.createElement("template");
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+  function byNewest(a,b){ return (b.createdAt||"").localeCompare(a.createdAt||""); }
 
   var toastTimer = null;
   function showToast(msg){
@@ -224,30 +272,32 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
     t.textContent = msg;
     t.classList.add("show");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2800);
   }
 
   function persist(){
     if(!storageOk) return;
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    catch(e){ storageOk = false; showToast("Couldn't save — your browser's storage may be full or blocked."); }
+    catch(e){ storageOk = false; showToast("Couldn't save — browser storage may be full or blocked. Export a backup."); }
   }
 
-  function setTab(tab){ ui.tab = tab; ui.openForm = null; ui.confirmRemoveAll = false; render(); }
-
-  function el(html){
-    var t = document.createElement("template");
-    t.innerHTML = html.trim();
-    return t.content.firstElementChild;
+  function setTab(tab){ ui.tab = tab; ui.form = null; ui.confirmRemoveAll = false; render(); }
+  function openForm(form){
+    ui.form = form; ui.confirmRemoveAll = false; render();
+    var p = document.getElementById("entry-form");
+    if(p && p.scrollIntoView) p.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  function closeForm(){ ui.form = null; render(); }
+  function isForm(section, editId){
+    return ui.form && ui.form.section === section && (editId === undefined || (ui.form.editId || null) === (editId || null));
   }
 
-  // ---------- export / import ----------
+  // ---------- backup export / import ----------
   function exportData(){
     var blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
-    var stamp = new Date().toISOString().slice(0,10);
-    a.href = url; a.download = "work-log-backup-" + stamp + ".json";
+    a.href = url; a.download = "work-log-backup-" + new Date().toISOString().slice(0,10) + ".json";
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
     showToast("Backup downloaded.");
@@ -255,16 +305,18 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
   function importData(file){
     var reader = new FileReader();
     reader.onload = function(){
-      try{
-        var parsed = JSON.parse(reader.result);
-        ["categories","tickets","trainings","confluence","tools","highlights"].forEach(function(k){
-          if(!Array.isArray(parsed[k])) parsed[k] = [];
-        });
-        if(!parsed.categories.length) parsed.categories = DEFAULT_STATE.categories.slice();
-        state = parsed;
-        persist(); render();
-        showToast("Backup restored.");
-      }catch(e){ showToast("That file couldn't be read as a backup."); }
+      var parsed;
+      try{ parsed = JSON.parse(reader.result); }
+      catch(e){ showToast("That file couldn't be read as a backup."); return; }
+      if(!parsed || typeof parsed !== "object"){ showToast("That file couldn't be read as a backup."); return; }
+      if(!window.confirm("Replace everything in this log with the contents of this backup?")) return;
+      var skippedTrainings = Array.isArray(parsed.trainings) ? parsed.trainings.length : 0;
+      state = normalizeState(parsed);
+      ui.form = null; ui.confirmRemoveAll = false;
+      persist(); render();
+      showToast(skippedTrainings
+        ? "Backup restored. " + skippedTrainings + " training entr" + (skippedTrainings===1?"y was":"ies were") + " skipped (Trainings is no longer tracked)."
+        : "Backup restored.");
     };
     reader.readAsText(file);
   }
@@ -279,7 +331,6 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
   var TABS = [
     {id:"overview", label:"Overview"},
     {id:"tickets", label:"Tickets"},
-    {id:"trainings", label:"Trainings"},
     {id:"confluence", label:"Confluence Pages"},
     {id:"tools", label:"Tools Created"},
     {id:"highlights", label:"Highlights"}
@@ -305,47 +356,22 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
     });
     wrap.appendChild(head);
 
-    if(!storageOk){
-      wrap.appendChild(el('<div class="note">Your browser is blocking local storage (private browsing mode, perhaps), so entries won’t be saved between visits. Use "Export backup" before closing this tab.</div>'));
-    } else {
-      wrap.appendChild(el('<div class="note">Saved automatically in this browser. Use "Export backup" occasionally, or before switching computers.</div>'));
-    }
+    wrap.appendChild(el(storageOk
+      ? '<div class="note">Saved automatically in this browser. Use "Export backup" occasionally, or before switching computers.</div>'
+      : '<div class="note">Your browser is blocking local storage, so entries won’t be saved between visits. Use "Export backup" before closing this tab.</div>'));
 
     var tabs = el('<div class="tabs" role="tablist"></div>');
     TABS.forEach(function(t){
-      var b = el('<button type="button" class="tab-btn" role="tab" data-tab="'+t.id+'" aria-selected="'+(ui.tab===t.id)+'">'+escHtml(t.label)+'</button>');
+      var b = el('<button type="button" class="tab-btn" role="tab" aria-selected="'+(ui.tab===t.id)+'">'+escHtml(t.label)+'</button>');
       b.addEventListener("click", function(){ setTab(t.id); });
       tabs.appendChild(b);
     });
     wrap.appendChild(tabs);
-    var content = el('<div class="content"></div>');
+
+    var content = el('<div></div>');
     if(ui.tab === "overview") content.appendChild(renderOverview());
     else if(ui.tab === "tickets") content.appendChild(renderTickets());
-    else if(ui.tab === "trainings") content.appendChild(renderSimpleSection("trainings", {
-      title:"Trainings", addLabel:"+ Add training",
-      fields:[{key:"title", label:"Topic", type:"text", placeholder:"e.g. Bridge pipeline walkthrough"},
-              {key:"link", label:"Teams recording / chat link", type:"text", placeholder:"https://teams.microsoft.com/..."}],
-      render:function(item){ return trainingCard(item); }
-    }));
-    else if(ui.tab === "confluence") content.appendChild(renderSimpleSection("confluence", {
-      title:"Confluence Pages", addLabel:"+ Add page",
-      fields:[{key:"title", label:"Page title", type:"text", placeholder:"e.g. ADNS onboarding guide"},
-              {key:"link", label:"Confluence link", type:"text", placeholder:"https://yourteam.atlassian.net/wiki/..."}],
-      render:function(item){ return linkCard(item); }
-    }));
-    else if(ui.tab === "tools") content.appendChild(renderSimpleSection("tools", {
-      title:"Tools Created", addLabel:"+ Add tool",
-      fields:[{key:"title", label:"Tool name", type:"text", placeholder:"e.g. Extract log validator"},
-              {key:"link", label:"Link (repo, doc, app)", type:"text", placeholder:"optional"},
-              {key:"description", label:"What it does", type:"textarea", placeholder:"optional"}],
-      render:function(item){ return toolCard(item); }
-    }));
-    else if(ui.tab === "highlights") content.appendChild(renderSimpleSection("highlights", {
-      title:"Highlights", addLabel:"+ Add highlight",
-      fields:[{key:"title", label:"Title", type:"text", placeholder:"e.g. Cut extract failures 30%"},
-              {key:"description", label:"Details", type:"textarea", placeholder:"optional"}],
-      render:function(item){ return highlightCard(item); }
-    }));
+    else content.appendChild(renderSimpleSection(ui.tab));
     wrap.appendChild(content);
     return wrap;
   }
@@ -353,28 +379,23 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
   // ---------- overview ----------
   function renderOverview(){
     var frag = el('<div></div>');
-    var totals = {
-      tickets: state.tickets.length,
-      trainings: state.trainings.length,
-      confluence: state.confluence.length,
-      tools: state.tools.length
-    };
     var stat = el('<div class="stat-grid"></div>');
-    [["Tickets", totals.tickets],["Trainings given", totals.trainings],["Confluence pages", totals.confluence],["Tools created", totals.tools]].forEach(function(pair){
-      stat.appendChild(el('<div class="stat-tile"><div class="n">'+pair[1]+'</div><div class="lbl">'+escHtml(pair[0])+'</div></div>'));
-    });
+    [["Tickets", state.tickets.length],["Confluence pages", state.confluence.length],["Tools created", state.tools.length],["Highlights", state.highlights.length]]
+      .forEach(function(pair){
+        stat.appendChild(el('<div class="stat-tile"><div class="n">'+pair[1]+'</div><div class="lbl">'+escHtml(pair[0])+'</div></div>'));
+      });
     frag.appendChild(stat);
 
     if(state.tickets.length){
       frag.appendChild(el('<h3 style="margin-bottom:10px;">Tickets by category</h3>'));
       var bars = el('<div class="bars"></div>');
       var max = 0;
-      var counts = state.categories.map(function(c){
+      var rows = state.categories.map(function(c){
         var n = state.tickets.filter(function(t){ return t.categoryId===c.id; }).length;
         max = Math.max(max, n);
         return {cat:c, n:n};
       }).filter(function(r){ return r.n > 0; });
-      counts.forEach(function(r){
+      rows.forEach(function(r){
         var pct = max ? Math.round((r.n/max)*100) : 0;
         bars.appendChild(el(
           '<div class="bar-row"><span class="name">'+escHtml(r.cat.name)+'</span>' +
@@ -390,36 +411,35 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
       list.forEach(function(item){
         var mk = monthKey(item.createdAt);
         if(!mk) return;
-        months[mk] = months[mk] || {tickets:0, trainings:0, confluence:0, tools:0};
+        months[mk] = months[mk] || {tickets:0, confluence:0, tools:0, highlights:0};
         months[mk][key]++;
       });
     }
-    tally(state.tickets, "tickets"); tally(state.trainings, "trainings");
-    tally(state.confluence, "confluence"); tally(state.tools, "tools");
+    tally(state.tickets, "tickets"); tally(state.confluence, "confluence");
+    tally(state.tools, "tools"); tally(state.highlights, "highlights");
     var monthKeys = Object.keys(months).sort().reverse().slice(0,6);
     if(monthKeys.length){
       frag.appendChild(el('<h3 style="margin-bottom:10px;">Monthly summary</h3>'));
-      var table = el('<table class="month-table"><thead><tr><th>Month</th><th>Tickets</th><th>Trainings</th><th>Confluence</th><th>Tools</th></tr></thead><tbody></tbody></table>');
+      var table = el('<table class="month-table"><thead><tr><th>Month</th><th>Tickets</th><th>Confluence</th><th>Tools</th><th>Highlights</th></tr></thead><tbody></tbody></table>');
       var tbody = table.querySelector("tbody");
       monthKeys.forEach(function(mk){
         var m = months[mk];
-        tbody.appendChild(el('<tr><td>'+escHtml(monthLabel(mk))+'</td><td>'+m.tickets+'</td><td>'+m.trainings+'</td><td>'+m.confluence+'</td><td>'+m.tools+'</td></tr>'));
+        tbody.appendChild(el('<tr><td>'+escHtml(monthLabel(mk))+'</td><td>'+m.tickets+'</td><td>'+m.confluence+'</td><td>'+m.tools+'</td><td>'+m.highlights+'</td></tr>'));
       });
       frag.appendChild(table);
     }
 
-    var allItems = []
+    var all = []
       .concat(state.tickets.map(function(t){ return {type:"Ticket", title:t.title || t.link || "Untitled ticket", createdAt:t.createdAt, color:catById(t.categoryId).color}; }))
-      .concat(state.trainings.map(function(t){ return {type:"Training", title:t.title, createdAt:t.createdAt, color:"var(--cat-2)"}; }))
-      .concat(state.confluence.map(function(t){ return {type:"Confluence", title:t.title, createdAt:t.createdAt, color:"var(--cat-3)"}; }))
-      .concat(state.tools.map(function(t){ return {type:"Tool", title:t.title, createdAt:t.createdAt, color:"var(--cat-5)"}; }))
-      .concat(state.highlights.map(function(t){ return {type:"Highlight", title:t.title, createdAt:t.createdAt, color:"var(--cat-6)"}; }));
-    allItems.sort(function(a,b){ return (b.createdAt||"").localeCompare(a.createdAt||""); });
-    allItems = allItems.slice(0,8);
+      .concat(state.confluence.map(function(t){ return {type:"Confluence", title:t.title || t.link || "Untitled page", createdAt:t.createdAt, color:"var(--cat-3)"}; }))
+      .concat(state.tools.map(function(t){ return {type:"Tool", title:t.title || t.link || "Untitled tool", createdAt:t.createdAt, color:"var(--cat-5)"}; }))
+      .concat(state.highlights.map(function(t){ return {type:"Highlight", title:t.title || "Untitled highlight", createdAt:t.createdAt, color:"var(--cat-6)"}; }));
+    all.sort(byNewest);
+    all = all.slice(0,8);
     frag.appendChild(el('<h3 style="margin-bottom:10px;">Recent activity</h3>'));
-    if(allItems.length){
+    if(all.length){
       var feed = el('<div class="feed"></div>');
-      allItems.forEach(function(it){
+      all.forEach(function(it){
         feed.appendChild(el(
           '<div class="feed-item"><span class="feed-dot" style="background:'+it.color+';"></span>' +
           '<span>'+escHtml(it.type)+' &middot; '+escHtml(it.title)+'</span>' +
@@ -428,7 +448,7 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
       });
       frag.appendChild(feed);
     } else {
-      frag.appendChild(el('<div class="empty">Nothing logged yet. Add a ticket, training, page or tool from the tabs above and it will show up here.</div>'));
+      frag.appendChild(el('<div class="empty">Nothing logged yet. Add a ticket, page, tool or highlight from the tabs above and it will show up here.</div>'));
     }
     return frag;
   }
@@ -436,24 +456,25 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
   // ---------- tickets ----------
   function renderTickets(){
     var frag = el('<div></div>');
-
     var shown = state.tickets.filter(function(t){ return ui.ticketFilter==="all" || t.categoryId===ui.ticketFilter; });
-    shown.sort(function(a,b){ return (b.createdAt||"").localeCompare(a.createdAt||""); });
+    shown.sort(byNewest);
 
     var head = el('<div class="section-head"><h2>Tickets</h2></div>');
-    var headBtns = el('<div style="display:flex; gap:8px; flex-wrap:wrap;"></div>');
+    var btns = el('<div class="head-btns"></div>');
     var addBtn = el('<button type="button" class="btn btn-primary">+ Add ticket</button>');
-    addBtn.addEventListener("click", function(){ ui.openForm = ui.openForm === "ticket" ? null : "ticket"; ui.confirmRemoveAll = false; render(); });
-    headBtns.appendChild(addBtn);
+    addBtn.addEventListener("click", function(){
+      if(isForm("tickets", null)) closeForm(); else openForm({section:"tickets", editId:null});
+    });
+    btns.appendChild(addBtn);
     if(shown.length){
-      var removeAllBtn = el('<button type="button" class="btn btn-sm" style="border-color:var(--danger); color:var(--danger);">Remove all ('+shown.length+')</button>');
-      removeAllBtn.addEventListener("click", function(){ ui.confirmRemoveAll = !ui.confirmRemoveAll; ui.openForm = null; render(); });
-      headBtns.appendChild(removeAllBtn);
+      var removeAllBtn = el('<button type="button" class="btn btn-sm btn-danger-outline">Remove all ('+shown.length+')</button>');
+      removeAllBtn.addEventListener("click", function(){ ui.confirmRemoveAll = !ui.confirmRemoveAll; ui.form = null; render(); });
+      btns.appendChild(removeAllBtn);
     }
-    head.appendChild(headBtns);
+    head.appendChild(btns);
     frag.appendChild(head);
 
-    if(ui.openForm === "ticket"){ frag.appendChild(ticketForm()); }
+    if(ui.form && ui.form.section === "tickets"){ frag.appendChild(ticketForm(ui.form.editId)); }
 
     var chips = el('<div class="chips"></div>');
     var allChip = el('<button type="button" class="chip" aria-pressed="'+(ui.ticketFilter==="all")+'">All</button>');
@@ -465,27 +486,29 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
       chips.appendChild(chip);
     });
     var addCatChip = el('<button type="button" class="chip" style="border-style:dashed;">+ New category</button>');
-    addCatChip.addEventListener("click", function(){ ui.openForm = ui.openForm === "category" ? null : "category"; render(); });
+    addCatChip.addEventListener("click", function(){
+      if(ui.form && ui.form.section === "category") closeForm(); else openForm({section:"category", editId:null});
+    });
     chips.appendChild(addCatChip);
     frag.appendChild(chips);
 
-    if(ui.openForm === "category"){ frag.appendChild(categoryForm()); }
+    if(ui.form && ui.form.section === "category"){ frag.appendChild(categoryForm()); }
 
     if(ui.confirmRemoveAll && shown.length){
       var catName = ui.ticketFilter === "all" ? "all categories" : catById(ui.ticketFilter).name;
       var confirmPanel = el(
-        '<div class="panel" style="border-color:var(--danger);">' +
-        '<h3 style="color:var(--danger);">Remove '+shown.length+' ticket'+(shown.length===1?'':'s')+' in '+escHtml(catName)+'?</h3>' +
-        '<div style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">This can’t be undone.</div>' +
+        '<div class="panel danger" id="entry-form">' +
+        '<h3>Remove '+shown.length+' ticket'+(shown.length===1?'':'s')+' in '+escHtml(catName)+'?</h3>' +
+        '<div class="hint">This can’t be undone.</div>' +
         '<div class="form-actions">' +
-        '<button type="button" class="btn" id="ra-yes" style="background:var(--danger); border-color:var(--danger); color:#fff;">Yes, remove all</button>' +
+        '<button type="button" class="btn btn-danger" id="ra-yes">Yes, remove all</button>' +
         '<button type="button" class="btn" id="ra-cancel">Cancel</button>' +
         '</div></div>'
       );
       confirmPanel.querySelector("#ra-yes").addEventListener("click", function(){
-        var idsToRemove = {};
-        shown.forEach(function(t){ idsToRemove[t.id] = true; });
-        state.tickets = state.tickets.filter(function(t){ return !idsToRemove[t.id]; });
+        var ids = {};
+        shown.forEach(function(t){ ids[t.id] = true; });
+        state.tickets = state.tickets.filter(function(t){ return !ids[t.id]; });
         ui.confirmRemoveAll = false;
         render(); persist();
       });
@@ -503,195 +526,243 @@ code,.mono{font-family:"Consolas","SFMono-Regular",ui-monospace,monospace;}
     return frag;
   }
 
-  function ticketForm(){
+  function fillCategories(sel, selectedId){
+    state.categories.forEach(function(c){
+      var o = document.createElement("option");
+      o.value = c.id; o.textContent = c.name;
+      sel.appendChild(o);
+    });
+    sel.value = selectedId;
+  }
+
+  function ticketForm(editId){
+    var existing = editId ? findById(state.tickets, editId) : null;
+    if(editId && !existing){ ui.form = null; return el('<div></div>'); }
+
+    if(existing){
+      // Edit one ticket.
+      var pe = el(
+        '<div class="panel" id="entry-form"><h3>Edit ticket</h3>' +
+        '<div class="form-row">' +
+        '<div class="field"><label for="tf-cat">Category</label><select id="tf-cat"></select></div>' +
+        '<div class="field"><label for="tf-link">Ticket link or key</label><input id="tf-link" type="text" placeholder="HDTR-32324 or a full link"></div>' +
+        '</div>' +
+        '<div class="field"><label for="tf-title">Title (optional)</label><input id="tf-title" type="text" placeholder="optional"></div>' +
+        '<div class="form-actions"><button type="button" class="btn btn-primary" id="tf-save">Save changes</button>' +
+        '<button type="button" class="btn" id="tf-cancel">Cancel</button></div></div>'
+      );
+      fillCategories(pe.querySelector("#tf-cat"), existing.categoryId);
+      pe.querySelector("#tf-link").value = existing.link || "";
+      pe.querySelector("#tf-title").value = existing.title || "";
+      pe.querySelector("#tf-save").addEventListener("click", function(){
+        var link = normalizeTicketEntry(pe.querySelector("#tf-link").value);
+        var title = pe.querySelector("#tf-title").value.trim();
+        if(!link && !title){ pe.querySelector("#tf-link").focus(); return; }
+        if(link && isDuplicateTicket(link, existing.id)){ showToast("That ticket is already logged."); return; }
+        existing.categoryId = pe.querySelector("#tf-cat").value;
+        existing.link = link;
+        existing.title = title;
+        ui.form = null; render(); persist();
+        showToast("Ticket updated.");
+      });
+      pe.querySelector("#tf-cancel").addEventListener("click", closeForm);
+      return pe;
+    }
+
+    // Add one or many tickets.
     var p = el(
-      '<div class="panel"><h3>New ticket</h3>' +
+      '<div class="panel" id="entry-form"><h3>New ticket</h3>' +
       '<div class="field"><label for="tf-cat">Category</label><select id="tf-cat"></select></div>' +
       '<div class="field"><label for="tf-link">Ticket link(s) or key(s)</label>' +
-      '<textarea id="tf-link" placeholder="HDTR-32324 or a full link\nPaste several — one per line, or separated by commas — to add them all at once. A bare key like HDTR-32324 becomes '+escHtml(JIRA_BASE)+'HDTR-32324 automatically."></textarea></div>' +
-      '<div class="field"><label for="tf-title">Title (optional — ignored when adding multiple links)</label><input id="tf-title" type="text" placeholder="optional — e.g. Fix extract job timeout"></div>' +
+      '<textarea id="tf-link" placeholder="HDTR-32324 or a full link"></textarea>' +
+      '<div class="hint" style="margin:4px 0 0;">Paste several at once, one per line or separated by commas. A bare key like HDTR-32324 becomes '+escHtml(JIRA_BASE)+'HDTR-32324. Duplicates are skipped.</div></div>' +
+      '<div class="field"><label for="tf-title">Title (optional — ignored when adding multiple links)</label><input id="tf-title" type="text" placeholder="optional"></div>' +
       '<div class="form-actions"><button type="button" class="btn btn-primary" id="tf-save">Save ticket</button>' +
       '<button type="button" class="btn" id="tf-cancel">Cancel</button></div></div>'
     );
-    var sel = p.querySelector("#tf-cat");
-    state.categories.forEach(function(c){ sel.appendChild(el('<option value="'+c.id+'">'+escHtml(c.name)+'</option>')); });
-    if(ui.ticketFilter !== "all") sel.value = ui.ticketFilter;
+    fillCategories(p.querySelector("#tf-cat"), ui.ticketFilter !== "all" ? ui.ticketFilter : state.categories[0].id);
     p.querySelector("#tf-save").addEventListener("click", function(){
       var raw = p.querySelector("#tf-link").value;
       var title = p.querySelector("#tf-title").value.trim();
-      var links = raw.split(/[,\n]+/)
-        .map(function(s){ return normalizeTicketEntry(s); })
-        .filter(function(s){ return s.length > 0; });
+      var categoryId = p.querySelector("#tf-cat").value;
+      var links = raw.split(/[,\n]+/).map(normalizeTicketEntry).filter(function(s){ return s.length > 0; });
       if(!links.length && !title){ p.querySelector("#tf-link").focus(); return; }
 
-      // Skip duplicates: anything already logged (any category), or repeated within this paste.
-      var seen = {};
-      state.tickets.forEach(function(t){ if(t.link) seen[t.link.toLowerCase()] = true; });
-      var fresh = [], skipped = 0;
+      var seenNow = {}, fresh = [], skipped = 0;
       links.forEach(function(link){
-        var key = link.toLowerCase();
-        if(link && seen[key]){ skipped++; return; }
-        if(link) seen[key] = true;
+        var k = link.toLowerCase();
+        if(seenNow[k] || isDuplicateTicket(link, null)){ skipped++; return; }
+        seenNow[k] = true;
         fresh.push(link);
       });
 
+      var added = 0;
       if(!links.length){
-        state.tickets.push({ id:uid(), categoryId: sel.value, title: title, link: "", createdAt: nowIso() });
+        state.tickets.push({id:uid(), categoryId:categoryId, title:title, link:"", createdAt:nowIso()});
+        added = 1;
       } else if(links.length === 1){
         if(fresh.length){
-          state.tickets.push({ id:uid(), categoryId: sel.value, title: title, link: fresh[0], createdAt: nowIso() });
+          state.tickets.push({id:uid(), categoryId:categoryId, title:title, link:fresh[0], createdAt:nowIso()});
+          added = 1;
         }
       } else {
         var stamp = nowIso();
         fresh.forEach(function(link){
-          state.tickets.push({ id:uid(), categoryId: sel.value, title: "", link: link, createdAt: stamp });
+          state.tickets.push({id:uid(), categoryId:categoryId, title:"", link:link, createdAt:stamp});
         });
+        added = fresh.length;
       }
 
-      var added = fresh.length || (!links.length ? 1 : 0);
       var msg = added ? "Added " + added + " ticket" + (added===1?"":"s") + "." : "";
       if(skipped) msg += (msg ? " " : "") + "Skipped " + skipped + " duplicate" + (skipped===1?"":"s") + ".";
-      if(!added && !skipped) msg = "Nothing added.";
-      ui.openForm = null; render(); persist();
-      if(msg) showToast(msg);
+      if(!msg) msg = "Nothing added.";
+      ui.form = null; render(); persist();
+      showToast(msg);
     });
-    p.querySelector("#tf-cancel").addEventListener("click", function(){ ui.openForm = null; render(); });
+    p.querySelector("#tf-cancel").addEventListener("click", closeForm);
     return p;
   }
 
   function categoryForm(){
     var p = el(
-      '<div class="panel"><h3>New category</h3>' +
+      '<div class="panel" id="entry-form"><h3>New category</h3>' +
       '<div class="field"><label for="cf-name">Category name</label><input id="cf-name" type="text" placeholder="e.g. Ingestion"></div>' +
       '<div class="form-actions"><button type="button" class="btn btn-primary" id="cf-save">Add category</button>' +
       '<button type="button" class="btn" id="cf-cancel">Cancel</button></div></div>'
     );
     p.querySelector("#cf-save").addEventListener("click", function(){
       var name = p.querySelector("#cf-name").value.trim();
-      if(!name) { p.querySelector("#cf-name").focus(); return; }
+      if(!name){ p.querySelector("#cf-name").focus(); return; }
       var id = name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"") || uid();
       if(state.categories.some(function(c){ return c.id===id; })) id = id + "-" + uid().slice(0,4);
-      var color = CAT_ROTATION[state.categories.length % CAT_ROTATION.length];
-      state.categories.push({id:id, name:name, color:color});
-      ui.openForm = null; render(); persist();
+      state.categories.push({id:id, name:name, color:CAT_ROTATION[state.categories.length % CAT_ROTATION.length]});
+      ui.form = null; render(); persist();
     });
-    p.querySelector("#cf-cancel").addEventListener("click", function(){ ui.openForm = null; render(); });
+    p.querySelector("#cf-cancel").addEventListener("click", closeForm);
     return p;
   }
 
   function ticketCard(t){
     var c = catById(t.categoryId);
-    var hasTitle = !!t.title;
     var linkAnchor = t.link ? '<a class="mono" href="'+escHtml(safeLink(t.link))+'" target="_blank" rel="noopener noreferrer">'+escHtml(t.link)+'</a>' : "";
-    var titleHtml = hasTitle ? escHtml(t.title) : (linkAnchor || '<em>Untitled ticket</em>');
-    var subLinkHtml = (hasTitle && linkAnchor) ? linkAnchor : "";
+    var titleHtml = t.title ? escHtml(t.title) : (linkAnchor || '<em>Untitled ticket</em>');
+    var subLink = (t.title && linkAnchor) ? linkAnchor : "";
     var card = el(
       '<div class="card"><div class="card-main">' +
       '<div class="card-title">'+titleHtml+'</div>' +
-      '<div class="card-sub"><span class="badge" style="background:'+c.color+';">'+escHtml(c.name)+'</span>'+
-      (subLinkHtml ? '<span>'+subLinkHtml+'</span>' : '') +
+      '<div class="card-sub"><span class="badge" style="background:'+c.color+';">'+escHtml(c.name)+'</span>' +
+      (subLink ? '<span>'+subLink+'</span>' : '') +
       '<span>'+fmtDate(t.createdAt)+'</span></div>' +
-      '</div><button type="button" class="btn btn-ghost" title="Delete">Remove</button></div>'
+      '</div></div>'
     );
-    card.querySelector("button").addEventListener("click", function(){
-      state.tickets = state.tickets.filter(function(x){ return x.id!==t.id; });
-      render(); persist();
-    });
+    card.appendChild(actionButtons(
+      function(){ openForm({section:"tickets", editId:t.id}); },
+      function(){
+        state.tickets = state.tickets.filter(function(x){ return x.id !== t.id; });
+        if(ui.form && ui.form.editId === t.id) ui.form = null;
+        render(); persist();
+      }
+    ));
     return card;
   }
 
-  // ---------- generic simple sections (trainings / confluence / tools / highlights) ----------
-  function renderSimpleSection(key, cfg){
+  // ---------- generic lists (confluence / tools / highlights) ----------
+  function actionButtons(onEdit, onRemove){
+    var wrap = el('<div class="card-actions"><button type="button" class="btn btn-ghost" data-act="edit">Edit</button><button type="button" class="btn btn-ghost remove" data-act="remove">Remove</button></div>');
+    wrap.querySelector('[data-act="edit"]').addEventListener("click", onEdit);
+    wrap.querySelector('[data-act="remove"]').addEventListener("click", onRemove);
+    return wrap;
+  }
+
+  function renderSimpleSection(key){
+    var cfg = CFG[key];
     var frag = el('<div></div>');
     var head = el('<div class="section-head"><h2>'+escHtml(cfg.title)+'</h2></div>');
     var addBtn = el('<button type="button" class="btn btn-primary">'+escHtml(cfg.addLabel)+'</button>');
-    addBtn.addEventListener("click", function(){ ui.openForm = ui.openForm===key ? null : key; render(); });
+    addBtn.addEventListener("click", function(){
+      if(isForm(key, null)) closeForm(); else openForm({section:key, editId:null});
+    });
     head.appendChild(addBtn);
     frag.appendChild(head);
 
-    if(ui.openForm === key){ frag.appendChild(simpleForm(key, cfg)); }
+    if(ui.form && ui.form.section === key){ frag.appendChild(simpleForm(key, ui.form.editId)); }
 
-    var items = state[key].slice().sort(function(a,b){ return (b.createdAt||"").localeCompare(a.createdAt||""); });
+    var items = state[key].slice().sort(byNewest);
     if(!items.length){
       frag.appendChild(el('<div class="empty">Nothing here yet. Use "'+escHtml(cfg.addLabel)+'" to log your first entry.</div>'));
     } else {
       var list = el('<div class="list"></div>');
-      items.forEach(function(item){
-        var card = cfg.render(item);
-        var rm = card.querySelector(".btn-ghost");
-        if(rm){ rm.addEventListener("click", function(){ state[key] = state[key].filter(function(x){ return x.id!==item.id; }); render(); persist(); }); }
-        list.appendChild(card);
-      });
+      items.forEach(function(item){ list.appendChild(itemCard(key, item)); });
       frag.appendChild(list);
     }
     return frag;
   }
 
-  function simpleForm(key, cfg){
-    var idPrefix = "sf-" + key + "-";
-    var html = '<div class="panel"><h3>New entry</h3>';
-    cfg.fields.forEach(function(f){
-      if(f.type === "textarea"){
-        html += '<div class="field"><label for="'+idPrefix+f.key+'">'+escHtml(f.label)+'</label><textarea id="'+idPrefix+f.key+'" placeholder="'+escHtml(f.placeholder||"")+'"></textarea></div>';
-      } else {
-        html += '<div class="field"><label for="'+idPrefix+f.key+'">'+escHtml(f.label)+'</label><input id="'+idPrefix+f.key+'" type="text" placeholder="'+escHtml(f.placeholder||"")+'"></div>';
+  function itemCard(key, item){
+    var cfg = CFG[key];
+    var title = item.title || item.link || (key==="highlights" ? "Untitled highlight" : "Untitled");
+    var linkHtml = (cfg.showLink && item.link) ? '<a href="'+escHtml(safeLink(item.link))+'" target="_blank" rel="noopener noreferrer">'+escHtml(item.link)+'</a>' : "";
+    var sub = (linkHtml ? '<span>'+linkHtml+'</span>' : "") + '<span>'+fmtDate(item.createdAt)+'</span>';
+    var card = el(
+      '<div class="card"><div class="card-main">' +
+      '<div class="card-title">'+escHtml(title)+'</div>' +
+      '<div class="card-sub">'+sub+'</div>' +
+      (cfg.showDesc && item.description ? '<div class="card-desc">'+escHtml(item.description)+'</div>' : '') +
+      '</div></div>'
+    );
+    card.appendChild(actionButtons(
+      function(){ openForm({section:key, editId:item.id}); },
+      function(){
+        state[key] = state[key].filter(function(x){ return x.id !== item.id; });
+        if(ui.form && ui.form.editId === item.id) ui.form = null;
+        render(); persist();
       }
-    });
-    html += '<div class="form-actions"><button type="button" class="btn btn-primary" id="'+idPrefix+'save">Save</button>' +
-      '<button type="button" class="btn" id="'+idPrefix+'cancel">Cancel</button></div></div>';
-    var p = el(html);
-    p.querySelector("#"+idPrefix+"save").addEventListener("click", function(){
-      var entry = {id:uid(), createdAt: nowIso()};
-      var firstKey = cfg.fields[0].key, ok = true;
-      cfg.fields.forEach(function(f){
-        var v = p.querySelector("#"+idPrefix+f.key).value.trim();
-        entry[f.key] = v;
-        if(f.key === firstKey && !v) ok = false;
-      });
-      if(!ok){ p.querySelector("#"+idPrefix+firstKey).focus(); return; }
-      state[key].push(entry);
-      ui.openForm = null; render(); persist();
-    });
-    p.querySelector("#"+idPrefix+"cancel").addEventListener("click", function(){ ui.openForm = null; render(); });
-    return p;
+    ));
+    return card;
   }
 
-  function trainingCard(t){
-    var linkHtml = t.link ? '<a href="'+escHtml(safeLink(t.link))+'" target="_blank" rel="noopener noreferrer">Open in Teams</a>' : "";
-    return el(
-      '<div class="card"><div class="card-main">' +
-      '<div class="card-title">'+escHtml(t.title)+'</div>' +
-      '<div class="card-sub">'+(linkHtml ? '<span>'+linkHtml+'</span>' : '<span>No link added</span>')+'<span>'+fmtDate(t.createdAt)+'</span></div>' +
-      '</div><button type="button" class="btn btn-ghost">Remove</button></div>'
-    );
-  }
-  function linkCard(t){
-    var linkHtml = t.link ? '<a href="'+escHtml(safeLink(t.link))+'" target="_blank" rel="noopener noreferrer">'+escHtml(t.link)+'</a>' : "";
-    return el(
-      '<div class="card"><div class="card-main">' +
-      '<div class="card-title">'+escHtml(t.title)+'</div>' +
-      '<div class="card-sub">'+(linkHtml ? '<span>'+linkHtml+'</span>' : '<span>No link added</span>')+'<span>'+fmtDate(t.createdAt)+'</span></div>' +
-      '</div><button type="button" class="btn btn-ghost">Remove</button></div>'
-    );
-  }
-  function toolCard(t){
-    var linkHtml = t.link ? '<a href="'+escHtml(safeLink(t.link))+'" target="_blank" rel="noopener noreferrer">'+escHtml(t.link)+'</a>' : "";
-    return el(
-      '<div class="card"><div class="card-main">' +
-      '<div class="card-title">'+escHtml(t.title)+'</div>' +
-      '<div class="card-sub">'+(linkHtml ? '<span>'+linkHtml+'</span>' : '')+'<span>'+fmtDate(t.createdAt)+'</span></div>' +
-      (t.description ? '<div class="card-desc">'+escHtml(t.description)+'</div>' : '') +
-      '</div><button type="button" class="btn btn-ghost">Remove</button></div>'
-    );
-  }
-  function highlightCard(t){
-    return el(
-      '<div class="card"><div class="card-main">' +
-      '<div class="card-title">'+escHtml(t.title)+'</div>' +
-      '<div class="card-sub"><span>'+fmtDate(t.createdAt)+'</span></div>' +
-      (t.description ? '<div class="card-desc">'+escHtml(t.description)+'</div>' : '') +
-      '</div><button type="button" class="btn btn-ghost">Remove</button></div>'
-    );
+  function simpleForm(key, editId){
+    var cfg = CFG[key];
+    var existing = editId ? findById(state[key], editId) : null;
+    if(editId && !existing){ ui.form = null; return el('<div></div>'); }
+
+    var idp = "sf-" + key + "-";
+    var html = '<div class="panel" id="entry-form"><h3>'+(existing ? "Edit entry" : "New entry")+'</h3>';
+    cfg.fields.forEach(function(f){
+      html += '<div class="field"><label for="'+idp+f.key+'">'+escHtml(f.label)+'</label>';
+      html += f.type === "textarea"
+        ? '<textarea id="'+idp+f.key+'" placeholder="'+escHtml(f.placeholder||"")+'"></textarea>'
+        : '<input id="'+idp+f.key+'" type="text" placeholder="'+escHtml(f.placeholder||"")+'">';
+      html += '</div>';
+    });
+    html += '<div class="form-actions"><button type="button" class="btn btn-primary" id="'+idp+'save">'+(existing ? "Save changes" : "Save")+'</button>' +
+      '<button type="button" class="btn" id="'+idp+'cancel">Cancel</button></div></div>';
+    var p = el(html);
+
+    if(existing){
+      cfg.fields.forEach(function(f){ p.querySelector("#"+idp+f.key).value = existing[f.key] || ""; });
+    }
+
+    p.querySelector("#"+idp+"save").addEventListener("click", function(){
+      var values = {}, any = false;
+      cfg.fields.forEach(function(f){
+        var v = p.querySelector("#"+idp+f.key).value.trim();
+        values[f.key] = v;
+        if(v) any = true;
+      });
+      if(!any){ p.querySelector("#"+idp+cfg.fields[0].key).focus(); return; }
+      if(existing){
+        cfg.fields.forEach(function(f){ existing[f.key] = values[f.key]; });
+        showToast("Entry updated.");
+      } else {
+        var entry = {id:uid(), createdAt:nowIso()};
+        cfg.fields.forEach(function(f){ entry[f.key] = values[f.key]; });
+        state[key].push(entry);
+      }
+      ui.form = null; render(); persist();
+    });
+    p.querySelector("#"+idp+"cancel").addEventListener("click", closeForm);
+    return p;
   }
 
   render();
